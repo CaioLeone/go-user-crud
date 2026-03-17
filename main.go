@@ -17,4 +17,6 @@ func main() {
 		w.Write([]byte("welcome"))
 	})
 	http.ListenAndServe(":8080", r)
+
+	fmt.Println("Conexao com porta 8080")
 }
