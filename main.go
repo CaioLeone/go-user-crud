@@ -18,5 +18,5 @@ func main() {
 	})
 	http.ListenAndServe(":8080", r)
 
-	fmt.Println("Conexao com porta 8080")
+	fmt.Println("Conexao com porta 8080 estabelecida")
 }
