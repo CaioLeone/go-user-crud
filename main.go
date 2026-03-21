@@ -10,13 +10,4 @@ import (
 
 func main() {
 	fmt.Println("Crud usando CHI")
-
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
-	})
-	http.ListenAndServe(":8080", r)
-
-	fmt.Println("Conexao com porta 8080 estabelecida")
 }
