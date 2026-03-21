@@ -34,7 +34,7 @@ func NewHandler(db map[string]string) http.Handler {
 	return route
 }
 
-func sendJson(w http.ResponseWriter, resp Response, status int){
+func sendJson(w http.ResponseWriter, resp Response, status int) {
 	w.Header().Set("Content-Type", "application/json")
 	data, err := json.Marshal(resp)
 	if err != nil {
@@ -47,28 +47,28 @@ func sendJson(w http.ResponseWriter, resp Response, status int){
 		return
 	}
 	w.WriteHeader(status)
-	if _,err := w.Write(data); err != nil{
-		slog.Error("Failed To Write Response To Client","error", err)
+	if _, err := w.Write(data); err != nil {
+		slog.Error("Failed To Write Response To Client", "error", err)
 		return
 	}
 }
 
-func handlePost(db map[string]string) http.HandlerFunc{
+func handlePost(db map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var body PostBody
 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 			sendJson(
-				w, 
-				Response{Error:"Invalid Body"}, 
-				http.StatusUnprocessableEntity,)
+				w,
+				Response{Error: "Invalid Body"},
+				http.StatusUnprocessableEntity)
 			return
 		}
 
 		//Validar
 		if _, err := url.Parse(body.URL); err != nil {
 			sendJson(
-				w, 
-				Response{Error:"Invalid Body"}, 
+				w,
+				Response{Error: "Invalid Body"},
 				http.StatusBadRequest,
 			)
 		}
@@ -76,14 +76,22 @@ func handlePost(db map[string]string) http.HandlerFunc{
 	}
 }
 
-func handleGet(db map[string]string) http.HandlerFunc{
+func handleGet(db map[string]string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		code := chi.URLParam(r, "code")
+		data, ok := db[code]
+		if !ok {
+			http.Error(w, "url nao encontrada", http.StatusNotFound)
+			return
+		}
+		http.Redirect(w, r, data, http.StatusPermanentRedirect)
+	}
+}
+
+func handlePut(db map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {}
 }
 
-func handlePut(db map[string]string) http.HandlerFunc{
-	return func(w http.ResponseWriter, r *http.Request) {}
-}
-
-func handleDelete(db map[string]string) http.HandlerFunc{
+func handleDelete(db map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {}
 }
