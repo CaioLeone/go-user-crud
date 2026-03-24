@@ -26,13 +26,26 @@ func NewHandler(db map[string]string) http.Handler {
 	route.Use(middleware.RequestID)
 	route.Use(middleware.Logger)
 
-	route.Post("/api/", handlePost(db))
-	route.Get("/{code}", handleGet(db))
-	route.Delete("/del/{code}", handleDelete(db))
-	route.Put("/api/put/{code}", handlePut(db))
+	//ROTA PADRAO
+	route.Route("/api/users", func(r chi.Router) {
+
+		//Sub Rota Post
+		route.Post("/", handlePost(db))
+
+		//Sub Rota Get
+		route.Get("/", handleGet(db))
+		route.Get("/id", handleGet(db)) //IMPLEMENTAR
+
+		//Sub Rota Put
+		route.Put("/id", handlePut(db))
+
+		//Sub Rota Delete
+		route.Delete("/id", handleDelete(db))
+	})
 
 	return route
 }
+
 
 func sendJson(w http.ResponseWriter, resp Response, status int) {
 	w.Header().Set("Content-Type", "application/json")
