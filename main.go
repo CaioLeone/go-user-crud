@@ -8,12 +8,7 @@ import (
 	"github.com/caioleone/go-user-crud/api"
 )
 
-type User struct {
-	id         int
-	first_name string
-	last_name  string
-	biography  string
-}
+
 
 func main() {
 	if err := run(); err != nil {
