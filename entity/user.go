@@ -1,13 +1,13 @@
 package entity
 
-type id uuid.UUID
+type id uuid.uuid
 
-type user struct {
+type User struct {
 	FirstName string
 	LastName  string
 	Biography string
 }
 
 type application struct {
-	data map[id]user
+	data map[id]User
 }

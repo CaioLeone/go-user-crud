@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
-	"net/url"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/google/uuid"
 )
 
 type PostBody struct {
@@ -33,7 +33,7 @@ func NewHandler(db map[string]string) http.Handler {
 		route.Post("/", handlePost(db))
 
 		//Sub Rota Get
-		route.Get("/", handleGet(db))
+		route.Get("/", handleGetAll(db))
 		route.Get("/id", handleGet(db)) //IMPLEMENTAR
 
 		//Sub Rota Put
@@ -45,7 +45,6 @@ func NewHandler(db map[string]string) http.Handler {
 
 	return route
 }
-
 
 func sendJson(w http.ResponseWriter, resp Response, status int) {
 	w.Header().Set("Content-Type", "application/json")
@@ -66,10 +65,12 @@ func sendJson(w http.ResponseWriter, resp Response, status int) {
 	}
 }
 
+// POST
 func handlePost(db map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var body PostBody
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+
+		var user User
+		if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 			sendJson(
 				w,
 				Response{Error: "Invalid Body"},
@@ -78,17 +79,21 @@ func handlePost(db map[string]string) http.HandlerFunc {
 		}
 
 		//Validar
-		if _, err := url.Parse(body.URL); err != nil {
+		if len(user.FirstName) < 2 || len(user.LastName) < 2 || len(user.Biography) < 20 {
 			sendJson(
 				w,
-				Response{Error: "Invalid Body"},
-				http.StatusBadRequest,
-			)
+				Response{Error: "Invalid Fields"},
+				http.StatusBadRequest)
+			return
 		}
-		sendJson(w, Response{}, http.StatusCreated)
+		user.ID = uuid.New().String()
+		db[user.ID] = user
+
+		sendJson(w, Response{Data: user}, http.StatusCreated)
 	}
 }
 
+// GET
 func handleGet(db map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		code := chi.URLParam(r, "code")
@@ -101,10 +106,24 @@ func handleGet(db map[string]string) http.HandlerFunc {
 	}
 }
 
+func handleGetAll(db map[string]string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		code := chi.URLParam(r, "code")
+		data, ok := db[code]
+		if !ok {
+			http.Error(w, "url nao encontrada", http.StatusNotFound)
+			return
+		}
+		http.Redirect(w, r, data, http.StatusPermanentRedirect)
+	}
+}
+
+// PUT
 func handlePut(db map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {}
 }
 
+// DELETE
 func handleDelete(db map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {}
 }
