@@ -9,7 +9,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/google/uuid"
 
-	entity "github.com/caioleone/go-user-crud/entity"
+	entity "github.com/caioleone/go-user-crud/user"
 )
 
 type PostBody struct {
@@ -48,19 +48,6 @@ func NewHandler(db map[string]string) http.Handler {
 	return route
 }
 
-func (r *entity.Repository) FindAll() []entity.User {
-	users := []entity.User{}
-
-	for _, user := range r.data {
-		users = append(users, user)
-	}
-	return users
-}
-
-func (r *entity.Repository) FindById(id uuid.UUID) (entity.User, bool) {
-	user, exists := r.data[id]
-	return user, exists
-}
 
 func sendJson(w http.ResponseWriter, resp Response, status int) {
 	w.Header().Set("Content-Type", "application/json")
