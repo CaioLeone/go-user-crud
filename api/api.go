@@ -8,6 +8,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/google/uuid"
+
+	entity "github.com/caioleone/go-user-crud/entity"
 )
 
 type PostBody struct {
@@ -46,6 +48,20 @@ func NewHandler(db map[string]string) http.Handler {
 	return route
 }
 
+func (r *entity.Repository) FindAll() []entity.User {
+	users := []entity.User{}
+
+	for _, user := range r.data {
+		users = append(users, user)
+	}
+	return users
+}
+
+func (r *entity.Repository) FindById(id uuid.UUID) (entity.User, bool) {
+	user, exists := r.data[id]
+	return user, exists
+}
+
 func sendJson(w http.ResponseWriter, resp Response, status int) {
 	w.Header().Set("Content-Type", "application/json")
 	data, err := json.Marshal(resp)
@@ -69,7 +85,7 @@ func sendJson(w http.ResponseWriter, resp Response, status int) {
 func handlePost(db map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		var user User
+		var user entity.User
 		if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 			sendJson(
 				w,
@@ -86,7 +102,7 @@ func handlePost(db map[string]string) http.HandlerFunc {
 				http.StatusBadRequest)
 			return
 		}
-		user.ID = uuid.New().String()
+		entity.User.ID = uuid.New().String()
 		db[user.ID] = user
 
 		sendJson(w, Response{Data: user}, http.StatusCreated)

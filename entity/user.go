@@ -1,13 +1,20 @@
 package entity
 
-type id uuid.uuid
+import "github.com/google/uuid"
 
 type User struct {
-	FirstName string
-	LastName  string
-	Biography string
+	ID        uuid.UUID `json:"id"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	Biography string    `json:"biography"`
 }
 
-type application struct {
-	data map[id]User
+type Repository struct {
+	data map[uuid.UUID]User
+}
+
+func NewRepository() *Repository {
+	return &Repository{
+		data: make(map[uuid.UUID]User),
+	}
 }
