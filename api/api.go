@@ -49,6 +49,7 @@ func NewHandler(db map[string]string) http.Handler {
 }
 
 
+
 func sendJson(w http.ResponseWriter, resp Response, status int) {
 	w.Header().Set("Content-Type", "application/json")
 	data, err := json.Marshal(resp)
