@@ -21,7 +21,7 @@ type Response struct {
 	Data  any    `json:"data,omitempty"`
 }
 
-func NewHandler(db map[string]string) http.Handler {
+func NewHandler(repo *entity.Repository) http.Handler {
 	route := chi.NewMux()
 
 	route.Use(middleware.Recoverer)
@@ -36,13 +36,13 @@ func NewHandler(db map[string]string) http.Handler {
 
 		//Sub Rota Get
 		route.Get("/", handleGetAll(db))
-		route.Get("/id", handleGet(db)) //IMPLEMENTAR
+		route.Get("/{id}", handleGet(db)) //IMPLEMENTAR
 
 		//Sub Rota Put
-		route.Put("/id", handlePut(db))
+		route.Put("/{id}", handlePut(db))
 
 		//Sub Rota Delete
-		route.Delete("/id", handleDelete(db))
+		route.Delete("/{id}", handleDelete(db))
 	})
 
 	return route
