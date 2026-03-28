@@ -20,30 +20,30 @@ type Response struct {
 }
 
 func NewHandler(repo *Repository) http.Handler {
-	route := chi.NewMux()
+	r := chi.NewMux()
 
-	route.Use(middleware.Recoverer)
-	route.Use(middleware.RequestID)
-	route.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.RequestID)
+	r.Use(middleware.Logger)
 
 	//ROTA PADRAO
-	route.Route("/api/users", func(r chi.Router) {
+	r.Route("/api/users", func(r chi.Router) {
 
 		//Sub Rota Post
-		route.Post("/", handleCreateUser(repo))
+		r.Post("/", handleCreateUser(repo))
 
 		//Sub Rota Get
-		route.Get("/", handleGetAllUsers(repo))
-		route.Get("/{id}", handleGetById(repo)) //IMPLEMENTAR
+		r.Get("/", handleGetAllUsers(repo))
+		r.Get("/{id}", handleGetById(repo)) //IMPLEMENTAR
 
 		//Sub Rota Put
-		route.Put("/{id}", handleUpdateUser(repo))
+		r.Put("/{id}", handleUpdateUser(repo))
 
 		//Sub Rota Delete
-		route.Delete("/{id}", handleDeleteUser(repo))
+		r.Delete("/{id}", handleDeleteUser(repo))
 	})
 
-	return route
+	return r
 }
 
 // CREATE USER
