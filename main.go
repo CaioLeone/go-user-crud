@@ -3,10 +3,9 @@ package main
 import (
 	"log/slog"
 	"net/http"
-	"os/user"
 	"time"
 
-	"github.com/caioleone/go-user-crud/api"
+	newApi "github.com/caioleone/go-user-crud/api"
 )
 
 func main() {
@@ -18,9 +17,9 @@ func main() {
 }
 
 func run() error {
-	repo := user.NewRepository()
+	repo := newApi.NewRepository()
 
-	handler := api.NewHandler(repo)
+	handler := newApi.NewHandler(repo)
 
 	s := http.Server{
 		ReadTimeout:  10 * time.Second,
