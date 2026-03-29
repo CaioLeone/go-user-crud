@@ -87,4 +87,4 @@ Remove o usuário com o id especificado na URL.
 
 ## Importante
 
-Teste seu trabalho manualmente usando Postman, Insomnia ou outra ferramentas de Cliente HTTP
+* Teste seu trabalho manualmente usando Postman, Insomnia ou outra ferramentas de Cliente HTTP
